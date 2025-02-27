@@ -7,6 +7,9 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.time.StopWatch;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public final class TipsManager
@@ -19,6 +22,7 @@ public final class TipsManager
     private static boolean roll = true;
     private static int lastTipIndex = -1;
     private static String currentTip;
+    private static final List<String> currentTipForRender = new ArrayList<>();
     private static float currentWaitTime;
     private static String currentLang = "";
 
@@ -59,7 +63,7 @@ public final class TipsManager
         if (length == 0)
             currentTip = "";
         else if (length == 1)
-            currentTip = AnotherTipsConfig.TIP_LANG_KEYS.get(0);
+            currentTip = I18n.format(AnotherTipsConfig.TIP_LANG_KEYS.get(0));
         else
         {
             if (lastTipIndex == -1)
@@ -77,6 +81,10 @@ public final class TipsManager
                 lastTipIndex = index;
             }
         }
+
+        currentTipForRender.clear();
+        String[] sections = currentTip.split("<br>");
+        currentTipForRender.addAll(Arrays.asList(sections));
     }
 
     public static void drawTips()
@@ -94,8 +102,9 @@ public final class TipsManager
         ScaledResolution resolution = new ScaledResolution(Minecraft.getMinecraft());
         //int width = resolution.getScaledWidth();
         int height = resolution.getScaledHeight();
-        RenderUtils.renderText("Tips", 20, height - 40, 1f, Color.YELLOW.getRGB(), true);
-        RenderUtils.renderText(currentTip, 20, height - 30, 1f, Color.WHITE.getRGB(), true);
+        RenderUtils.renderText("Tips", 20, height - 50, 1f, Color.YELLOW.getRGB(), true);
+        for (int i = 0; i < currentTipForRender.size(); i++)
+            RenderUtils.renderText(currentTipForRender.get(i), 20, height - 40 + i * 10, 1f, Color.WHITE.getRGB(), true);
 
         if (stopWatch.getNanoTime() / 1E9d >= currentWaitTime)
         {
