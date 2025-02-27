@@ -1,6 +1,8 @@
 package com.tttsaurus.anothertips.proxy;
 
 import com.tttsaurus.anothertips.AnotherTipsConfig;
+import com.tttsaurus.anothertips.core.TipsManager;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -20,5 +22,7 @@ public class ClientProxy extends CommonProxy
     public void init(FMLInitializationEvent event, Logger logger)
     {
         super.init(event, logger);
+
+        MinecraftForge.EVENT_BUS.register(TipsManager.class);
     }
 }

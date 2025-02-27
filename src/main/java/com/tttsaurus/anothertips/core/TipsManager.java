@@ -5,6 +5,8 @@ import com.tttsaurus.anothertips.render.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.time.StopWatch;
 import java.awt.*;
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ import java.util.Random;
 public final class TipsManager
 {
     private static boolean active = false;
-    private static boolean listenChunkBuild = false;
+    private static boolean listenIngame = false;
 
     private static final Random random = new Random();
     private static final StopWatch stopWatch = new StopWatch();
@@ -30,8 +32,7 @@ public final class TipsManager
     public static boolean getActive() { return active; }
     public static void setActive(boolean flag) { active = flag; }
 
-    public static boolean getListenChunkBuild() { return listenChunkBuild; }
-    public static void setListenChunkBuild(boolean flag) { listenChunkBuild = flag; }
+    public static void setListenIngame(boolean flag) { listenIngame = flag; }
 
     public static void resetTimer()
     {
@@ -108,10 +109,20 @@ public final class TipsManager
 
         if (stopWatch.getNanoTime() / 1E9d >= currentWaitTime)
         {
-            stopWatch.stop();
-            stopWatch.reset();
+            resetTimer();
             stopWatch.start();
             roll = true;
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRenderGameOverlay(RenderGameOverlayEvent.Post event)
+    {
+        if (listenIngame)
+        {
+            listenIngame = false;
+            active = false;
+            resetTimer();
         }
     }
 }

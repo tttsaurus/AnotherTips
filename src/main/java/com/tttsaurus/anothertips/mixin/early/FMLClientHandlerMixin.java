@@ -18,9 +18,9 @@ public class FMLClientHandlerMixin
     {
         if (FMLCommonHandler.instance().getSide().isClient())
         {
-            TipsManager.setListenChunkBuild(true);
-            TipsManager.resetTimer();
+            TipsManager.setListenIngame(true);
             TipsManager.setActive(true);
+            TipsManager.resetTimer();
         }
     }
 }
