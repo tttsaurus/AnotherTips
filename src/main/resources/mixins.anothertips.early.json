@@ -1,0 +1,17 @@
+{
+  "package": "com.tttsaurus.anothertips.mixin.early",
+  "refmap": "mixins.anothertips.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "FMLClientHandlerMixin"
+  ],
+  "client": [
+    "ChunkRenderWorkerMixin",
+    "GuiDownloadTerrainMixin",
+    "GuiScreenWorkingMixin",
+    "LoadingScreenRendererMixin"
+  ],
+  "server": []
+}
