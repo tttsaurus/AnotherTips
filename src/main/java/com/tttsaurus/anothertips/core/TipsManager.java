@@ -3,6 +3,7 @@ package com.tttsaurus.anothertips.core;
 import com.tttsaurus.anothertips.AnotherTipsConfig;
 import com.tttsaurus.anothertips.render.RenderUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.time.StopWatch;
 import java.awt.*;
@@ -90,7 +91,11 @@ public final class TipsManager
         if (!stopWatch.isStarted())
             stopWatch.start();
 
-        RenderUtils.renderText(currentTip, 10, 10, 1f, Color.RED.getRGB(), true);
+        ScaledResolution resolution = new ScaledResolution(Minecraft.getMinecraft());
+        //int width = resolution.getScaledWidth();
+        int height = resolution.getScaledHeight();
+        RenderUtils.renderText("Tips", 20, height - 40, 1f, Color.YELLOW.getRGB(), true);
+        RenderUtils.renderText(currentTip, 20, height - 30, 1f, Color.WHITE.getRGB(), true);
 
         if (stopWatch.getNanoTime() / 1E9d >= currentWaitTime)
         {
