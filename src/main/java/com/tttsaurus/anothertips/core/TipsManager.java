@@ -103,9 +103,11 @@ public final class TipsManager
         ScaledResolution resolution = new ScaledResolution(Minecraft.getMinecraft());
         //int width = resolution.getScaledWidth();
         int height = resolution.getScaledHeight();
-        RenderUtils.renderText("Tips", 20, height - 50, 1f, Color.YELLOW.getRGB(), true);
-        for (int i = 0; i < currentTipForRender.size(); i++)
-            RenderUtils.renderText(currentTipForRender.get(i), 20, height - 40 + i * 10, 1f, Color.WHITE.getRGB(), true);
+
+        int lineNum = currentTipForRender.size();
+        RenderUtils.renderText("Tips", 20, height - 20 - lineNum * 10, 1f, Color.YELLOW.getRGB(), true);
+        for (int i = 0; i < lineNum; i++)
+            RenderUtils.renderText(currentTipForRender.get(i), 20, height - 20 + i * 10 - (lineNum - 1) * 10, 1f, Color.WHITE.getRGB(), true);
 
         if (stopWatch.getNanoTime() / 1E9d >= currentWaitTime)
         {
