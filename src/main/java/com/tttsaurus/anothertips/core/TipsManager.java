@@ -23,8 +23,7 @@ public final class TipsManager
     private static final StopWatch stopWatch = new StopWatch();
     private static boolean roll = true;
     private static int lastTipIndex = -1;
-    private static String currentTip;
-    private static final List<String> currentTipForRender = new ArrayList<>();
+    private static final List<String> currentTip = new ArrayList<>();
     private static float currentWaitTime;
     private static String currentLang = "";
 
@@ -44,33 +43,23 @@ public final class TipsManager
     }
     //</editor-fold>
 
-    private static float calcTipTime(String tip)
-    {
-        if (!AnotherTipsConfig.TIP_WAIT_TIME.containsKey(currentLang))
-            return 1f;
-        else
-        {
-            float timePerChar = AnotherTipsConfig.TIP_WAIT_TIME.get(currentLang);
-            return tip.length() * timePerChar;
-        }
-    }
-
-    private static void rollTip()
+    private static void nextTip()
     {
         currentLang = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
 
         int length = AnotherTipsConfig.TIP_LANG_KEYS.size();
+        String rawTip;
 
         if (length == 0)
-            currentTip = "";
+            rawTip = "";
         else if (length == 1)
-            currentTip = I18n.format(AnotherTipsConfig.TIP_LANG_KEYS.get(0));
+            rawTip = AnotherTipsConfig.TIP_LANG_KEYS.get(0);
         else
         {
             if (lastTipIndex == -1)
             {
                 int index = random.nextInt(length);
-                currentTip = I18n.format(AnotherTipsConfig.TIP_LANG_KEYS.get(index));
+                rawTip = AnotherTipsConfig.TIP_LANG_KEYS.get(index);
                 lastTipIndex = index;
             }
             else
@@ -78,14 +67,27 @@ public final class TipsManager
                 int index = random.nextInt(length);
                 index = index == lastTipIndex ? index + 1 : index;
                 index = index >= length ? 0 : index;
-                currentTip = I18n.format(AnotherTipsConfig.TIP_LANG_KEYS.get(index));
+                rawTip = AnotherTipsConfig.TIP_LANG_KEYS.get(index);
                 lastTipIndex = index;
             }
         }
 
-        currentTipForRender.clear();
-        String[] sections = currentTip.split("<br>");
-        currentTipForRender.addAll(Arrays.asList(sections));
+        currentTip.clear();
+        String[] sections = rawTip.split("<br>");
+        currentTip.addAll(Arrays.asList(sections));
+
+        int charCount = 0;
+        for (int i = 0; i < currentTip.size(); i++)
+        {
+            String i18nTip = I18n.format(currentTip.get(i));
+            charCount += i18nTip.length();
+            currentTip.set(i, i18nTip);
+        }
+
+        if (!AnotherTipsConfig.TIP_WAIT_TIME.containsKey(currentLang))
+            currentWaitTime = 1f;
+        else
+            currentWaitTime = AnotherTipsConfig.TIP_WAIT_TIME.get(currentLang) * charCount;
     }
 
     public static void drawTips()
@@ -93,8 +95,7 @@ public final class TipsManager
         if (roll)
         {
             roll = false;
-            rollTip();
-            currentWaitTime = calcTipTime(currentTip);
+            nextTip();
         }
 
         if (!stopWatch.isStarted())
@@ -104,10 +105,10 @@ public final class TipsManager
         //int width = resolution.getScaledWidth();
         int height = resolution.getScaledHeight();
 
-        int lineNum = currentTipForRender.size();
+        int lineNum = currentTip.size();
         RenderUtils.renderText("Tips", 20, height - 20 - lineNum * 10, 1f, Color.YELLOW.getRGB(), true);
         for (int i = 0; i < lineNum; i++)
-            RenderUtils.renderText(currentTipForRender.get(i), 20, height - 20 + i * 10 - (lineNum - 1) * 10, 1f, Color.WHITE.getRGB(), true);
+            RenderUtils.renderText(currentTip.get(i), 20, height - 20 + i * 10 - (lineNum - 1) * 10, 1f, Color.WHITE.getRGB(), true);
 
         if (stopWatch.getNanoTime() / 1E9d >= currentWaitTime)
         {
