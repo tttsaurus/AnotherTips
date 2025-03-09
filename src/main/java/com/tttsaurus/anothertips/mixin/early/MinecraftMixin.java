@@ -1,22 +1,21 @@
 package com.tttsaurus.anothertips.mixin.early;
 
 import com.tttsaurus.anothertips.core.TipsManager;
-import net.minecraft.client.gui.GuiWorldSelection;
-import net.minecraft.world.storage.WorldSummary;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(FMLClientHandler.class)
-public class FMLClientHandlerMixin
+@Mixin(Minecraft.class)
+public class MinecraftMixin
 {
-    @Inject(method = "tryLoadExistingWorld", at = @At("HEAD"), remap = false)
-    public void tryLoadExistingWorld(GuiWorldSelection selectWorldGUI, WorldSummary comparator, CallbackInfo ci)
+    @Inject(method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V", at = @At("HEAD"))
+    public void loadWorld(WorldClient worldClientIn, String loadingMessage, CallbackInfo ci)
     {
-        if (FMLCommonHandler.instance().getSide().isClient())
+        WorldClient world = Minecraft.getMinecraft().world;
+        if (world == null)
         {
             if (!TipsManager.getActive())
             {

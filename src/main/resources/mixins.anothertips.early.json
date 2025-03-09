@@ -8,10 +8,10 @@
     "FMLClientHandlerMixin"
   ],
   "client": [
-    "ChunkRenderWorkerMixin",
     "GuiDownloadTerrainMixin",
     "GuiScreenWorkingMixin",
-    "LoadingScreenRendererMixin"
+    "LoadingScreenRendererMixin",
+    "MinecraftMixin"
   ],
   "server": []
 }
