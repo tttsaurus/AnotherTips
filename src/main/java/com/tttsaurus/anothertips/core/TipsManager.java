@@ -8,7 +8,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.time.StopWatch;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -74,14 +73,13 @@ public final class TipsManager
 
         currentTip.clear();
         String[] sections = rawTip.split("<br>");
-        currentTip.addAll(Arrays.asList(sections));
 
         int charCount = 0;
-        for (int i = 0; i < currentTip.size(); i++)
+        for (String section: sections)
         {
-            String i18nTip = I18n.format(currentTip.get(i));
+            String i18nTip = I18n.format(section);
             charCount += i18nTip.length();
-            currentTip.set(i, i18nTip);
+            currentTip.addAll(Arrays.asList(i18nTip.split("<br>")));
         }
 
         if (!AnotherTipsConfig.TIP_WAIT_TIME.containsKey(currentLang))
@@ -106,9 +104,9 @@ public final class TipsManager
         int height = resolution.getScaledHeight();
 
         int lineNum = currentTip.size();
-        RenderUtils.renderText("Tips", 20, height - 20 - lineNum * 10, 1f, Color.YELLOW.getRGB(), true);
+        RenderUtils.renderText(I18n.format("anothertips.tips.name"), 20, height - 20 - lineNum * 10, 1f, -1, true);
         for (int i = 0; i < lineNum; i++)
-            RenderUtils.renderText(currentTip.get(i), 20, height - 20 + i * 10 - (lineNum - 1) * 10, 1f, Color.WHITE.getRGB(), true);
+            RenderUtils.renderText(currentTip.get(i), 20, height - 20 + i * 10 - (lineNum - 1) * 10, 1f, -1, true);
 
         if (stopWatch.getNanoTime() / 1E9d >= currentWaitTime)
         {
