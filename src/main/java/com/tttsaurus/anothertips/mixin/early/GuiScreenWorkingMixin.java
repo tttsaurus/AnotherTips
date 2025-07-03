@@ -18,7 +18,7 @@ public class GuiScreenWorkingMixin
                     target = "Lnet/minecraft/client/gui/GuiScreenWorking;drawCenteredString(Lnet/minecraft/client/gui/FontRenderer;Ljava/lang/String;III)V",
                     ordinal = 0
             ))
-    public void mixin_drawScreen_GuiScreenWorking$drawCenteredString(GuiScreenWorking instance, FontRenderer fontRenderer, String s, int i0, int i1, int i2, Operation<Void> original)
+    public void drawTips(GuiScreenWorking instance, FontRenderer fontRenderer, String s, int i0, int i1, int i2, Operation<Void> original)
     {
         if (TipsManager.getActive())
             TipsManager.drawTips();

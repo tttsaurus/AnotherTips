@@ -18,7 +18,7 @@ public class LoadingScreenRendererMixin
                     target = "Lnet/minecraft/client/gui/FontRenderer;drawStringWithShadow(Ljava/lang/String;FFI)I",
                     ordinal = 0
             ))
-    public int mixin_setLoadingProgress_FontRenderer$drawStringWithShadow(FontRenderer instance, String text, float x, float y, int color, Operation<Integer> original)
+    public int drawTips(FontRenderer instance, String text, float x, float y, int color, Operation<Integer> original)
     {
         if (TipsManager.getActive())
             TipsManager.drawTips();

@@ -17,7 +17,7 @@ public class GuiDownloadTerrainMixin
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/GuiDownloadTerrain;drawCenteredString(Lnet/minecraft/client/gui/FontRenderer;Ljava/lang/String;III)V"
             ))
-    public void mixin_drawScreen_GuiDownloadTerrain$drawCenteredString(GuiDownloadTerrain instance, FontRenderer fontRenderer, String s, int i0, int i1, int i2, Operation<Void> original)
+    public void drawTips(GuiDownloadTerrain instance, FontRenderer fontRenderer, String s, int i0, int i1, int i2, Operation<Void> original)
     {
         if (TipsManager.getActive())
             TipsManager.drawTips();
