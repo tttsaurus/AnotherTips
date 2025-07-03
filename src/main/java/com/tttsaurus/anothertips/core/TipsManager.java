@@ -90,6 +90,8 @@ public final class TipsManager
 
     public static void drawTips()
     {
+        RenderUtils.storeCommonGlStates();
+
         if (roll)
         {
             roll = false;
@@ -114,6 +116,8 @@ public final class TipsManager
             stopWatch.start();
             roll = true;
         }
+
+        RenderUtils.restoreCommonGlStates();
     }
 
     @SubscribeEvent
