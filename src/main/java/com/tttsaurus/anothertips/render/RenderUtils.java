@@ -164,9 +164,4 @@ public class RenderUtils
     {
         return fontRenderer.getStringWidth(text);
     }
-
-    public static int getTextHeight(String text)
-    {
-        return fontRenderer.FONT_HEIGHT;
-    }
 }

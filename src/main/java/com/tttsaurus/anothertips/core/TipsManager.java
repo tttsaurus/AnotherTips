@@ -119,7 +119,7 @@ public final class TipsManager
 
             if (AnotherTipsConfig.ENABLE_TEXT_BACKGROUND)
             {
-                RenderUtils.renderRect(x, y, RenderUtils.getTextWidth(text), RenderUtils.getTextHeight(text), BACKGROUND_COLOR.getRGB());
+                RenderUtils.renderRect(x - 1, y, RenderUtils.getTextWidth(text) + 2, 10, BACKGROUND_COLOR.getRGB());
             }
 
             RenderUtils.renderText(text, x, y, 1f, -1, true);
