@@ -2,7 +2,10 @@ package com.tttsaurus.anothertips.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import java.nio.ByteBuffer;
@@ -12,8 +15,8 @@ import java.nio.IntBuffer;
 
 public class RenderUtils
 {
-    public static final IntBuffer INT_BUFFER_16 = ByteBuffer.allocateDirect(16 << 2).order(ByteOrder.nativeOrder()).asIntBuffer();
-    public static final FloatBuffer FLOAT_BUFFER_16 = ByteBuffer.allocateDirect(16 << 2).order(ByteOrder.nativeOrder()).asFloatBuffer();
+    private static final IntBuffer INT_BUFFER_16 = ByteBuffer.allocateDirect(16 << 2).order(ByteOrder.nativeOrder()).asIntBuffer();
+    private static final FloatBuffer FLOAT_BUFFER_16 = ByteBuffer.allocateDirect(16 << 2).order(ByteOrder.nativeOrder()).asFloatBuffer();
 
     //<editor-fold desc="gl states">
     private static int textureID = 0;
@@ -36,8 +39,10 @@ public class RenderUtils
     //<editor-fold desc="gl state management">
     public static void storeCommonGlStates()
     {
+        INT_BUFFER_16.clear();
         GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D, INT_BUFFER_16);
         textureID = INT_BUFFER_16.get(0);
+        FLOAT_BUFFER_16.clear();
         GL11.glGetFloat(GL11.GL_CURRENT_COLOR, FLOAT_BUFFER_16);
         r = FLOAT_BUFFER_16.get(0);
         g = FLOAT_BUFFER_16.get(1);
@@ -47,20 +52,27 @@ public class RenderUtils
         lighting = GL11.glIsEnabled(GL11.GL_LIGHTING);
         texture2D = GL11.glIsEnabled(GL11.GL_TEXTURE_2D);
         alphaTest = GL11.glIsEnabled(GL11.GL_ALPHA_TEST);
+        INT_BUFFER_16.clear();
         GL11.glGetInteger(GL11.GL_SHADE_MODEL, INT_BUFFER_16);
         shadeModel = INT_BUFFER_16.get(0);
         depthTest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
         cullFace = GL11.glIsEnabled(GL11.GL_CULL_FACE);
+        INT_BUFFER_16.clear();
         GL11.glGetInteger(GL14.GL_BLEND_SRC_RGB, INT_BUFFER_16);
         blendSrcRgb = INT_BUFFER_16.get(0);
+        INT_BUFFER_16.clear();
         GL11.glGetInteger(GL14.GL_BLEND_DST_RGB, INT_BUFFER_16);
         blendDstRgb = INT_BUFFER_16.get(0);
+        INT_BUFFER_16.clear();
         GL11.glGetInteger(GL14.GL_BLEND_SRC_ALPHA, INT_BUFFER_16);
         blendSrcAlpha = INT_BUFFER_16.get(0);
+        INT_BUFFER_16.clear();
         GL11.glGetInteger(GL14.GL_BLEND_DST_ALPHA, INT_BUFFER_16);
         blendDstAlpha = INT_BUFFER_16.get(0);
+        INT_BUFFER_16.clear();
         GL11.glGetInteger(GL11.GL_ALPHA_TEST_FUNC, INT_BUFFER_16);
         alphaFunc = INT_BUFFER_16.get(0);
+        FLOAT_BUFFER_16.clear();
         GL11.glGetFloat(GL11.GL_ALPHA_TEST_REF, FLOAT_BUFFER_16);
         alphaRef = FLOAT_BUFFER_16.get(0);
     }
@@ -102,7 +114,6 @@ public class RenderUtils
     public static FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
     public static float zLevel = 0;
 
-    //<editor-fold desc="text">
     public static void renderText(String text, float x, float y, float scale, int color, boolean shadow)
     {
         GlStateManager.disableCull();
@@ -119,5 +130,43 @@ public class RenderUtils
         fontRenderer.drawString(text, 0, 0, color, shadow);
         GlStateManager.popMatrix();
     }
-    //</editor-fold>
+
+    public static void renderRect(float x, float y, float width, float height, int color)
+    {
+        float a = (float) (color >> 24 & 255) / 255f;
+        float r = (float) (color >> 16 & 255) / 255f;
+        float g = (float) (color >> 8 & 255) / 255f;
+        float b = (float) (color & 255) / 255f;
+
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+
+        GlStateManager.tryBlendFuncSeparate(
+                GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ONE);
+
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        buffer.pos(x, y + height, 0).color(r, g, b, a).endVertex();
+        buffer.pos(x + width, y + height, 0).color(r, g, b, a).endVertex();
+        buffer.pos(x + width, y, 0).color(r, g, b, a).endVertex();
+        buffer.pos(x, y, 0).color(r, g, b, a).endVertex();
+        tessellator.draw();
+    }
+
+    public static int getTextWidth(String text)
+    {
+        return fontRenderer.getStringWidth(text);
+    }
+
+    public static int getTextHeight(String text)
+    {
+        return fontRenderer.FONT_HEIGHT;
+    }
 }

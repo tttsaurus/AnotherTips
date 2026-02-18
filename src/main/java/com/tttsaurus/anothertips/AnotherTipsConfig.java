@@ -7,6 +7,7 @@ public class AnotherTipsConfig
 {
     public static final List<String> TIP_LANG_KEYS = new ArrayList<>();
     public static final Map<String, Float> TIP_WAIT_TIME = new HashMap<>();
+    public static boolean ENABLE_TEXT_BACKGROUND;
 
     public static Configuration CONFIG;
 
@@ -36,6 +37,8 @@ public class AnotherTipsConfig
 
                 AnotherTipsConfig.TIP_WAIT_TIME.put(args[0], time);
             }
+
+            ENABLE_TEXT_BACKGROUND = CONFIG.getBoolean("Enable Text Background", "general", false, "A transparent box behind the text");
         }
         catch (Exception ignored) { }
         finally

@@ -8,6 +8,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.time.StopWatch;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.Random;
 
 public final class TipsManager
 {
+    private static final Color BACKGROUND_COLOR = new Color(28, 28, 28, 71);
+
     private static boolean active = false;
     private static boolean listenIngame = false;
 
@@ -108,7 +112,18 @@ public final class TipsManager
         int lineNum = currentTip.size();
         RenderUtils.renderText(I18n.format("anothertips.tips.name"), 20, height - 20 - lineNum * 10, 1f, -1, true);
         for (int i = 0; i < lineNum; i++)
-            RenderUtils.renderText(currentTip.get(i), 20, height - 20 + i * 10 - (lineNum - 1) * 10, 1f, -1, true);
+        {
+            int x = 20;
+            int y = height - 20 + i * 10 - (lineNum - 1) * 10;
+            String text = currentTip.get(i);
+
+            if (AnotherTipsConfig.ENABLE_TEXT_BACKGROUND)
+            {
+                RenderUtils.renderRect(x, y, RenderUtils.getTextWidth(text), RenderUtils.getTextHeight(text), BACKGROUND_COLOR.getRGB());
+            }
+
+            RenderUtils.renderText(text, x, y, 1f, -1, true);
+        }
 
         if (stopWatch.getNanoTime() / 1E9d >= currentWaitTime)
         {
